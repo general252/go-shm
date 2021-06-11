@@ -18,6 +18,7 @@ func NewReader() *Reader {
 	return &Reader{}
 }
 
+// Open open
 func (c *Reader) Open(name string, size int32) error {
 	var err error
 	c.m, err = shm.Create(name, size)
@@ -47,16 +48,24 @@ func (c *Reader) Read(p []byte) (int, error) {
 	}
 
 	for {
-		dataCount := c.getWriteLength() - c.getReadLength()
-		if dataCount > 0 {
-			if max := dataCount; uint64(len(p)) > max {
-				p = p[:max]
-			}
+		var ok = false
+		for i := 0; i < 1000; i++ {
+			dataCount := c.getWriteLength() - c.getReadLength()
+			if dataCount > 0 {
+				if max := dataCount; uint64(len(p)) > max {
+					p = p[:max]
+				}
 
-			break
-		} else {
-			time.Sleep(time.Millisecond)
+				ok = true
+				break
+			}
 		}
+
+		if ok {
+			break
+		}
+
+		time.Sleep(time.Nanosecond)
 	}
 
 	n, err := c.m.Read(p)

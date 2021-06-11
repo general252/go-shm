@@ -23,40 +23,15 @@ func ExampleNewWriter() {
 
 	log.Println("输入数据, 回车发送:")
 
-	if true {
-		rd := bufio.NewReader(os.Stdin)
-		for {
-			line, _, err := rd.ReadLine()
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			_ = w.Write(line)
+	rd := bufio.NewReader(os.Stdin)
+	for {
+		line, _, err := rd.ReadLine()
+		if err != nil {
+			log.Println(err)
+			return
 		}
-	}
 
-	if false {
-		var sendSize int
-		a := time.Now()
-		_ = a
-
-		data := make([]byte, 256*1024)
-		for i := 0; i < 256*1024; i++ {
-			data[i] = byte((i % 16) + 'a')
-		}
-		for {
-			//time.Sleep(time.Millisecond)
-
-			//data := fmt.Sprintf("---- %v", time.Now().Format(time.RFC3339Nano))
-			for i := 0; i < 10000; i++ {
-				_ = w.Write([]byte(data))
-			}
-
-			sendSize += 1000 * len(data)
-
-			log.Printf("发送: %v  %v MB", sendSize, float64(sendSize)/1024/1024/time.Since(a).Seconds()) //
-		}
+		_ = w.Write(line)
 	}
 
 	// output:
@@ -69,6 +44,10 @@ func ExampleShowInfo() {
 		return
 	}
 
+	var printUint64 = func(data uint64) {
+		log.Printf("%v %x", data, data)
+	}
+
 	buffer := make([]byte, 48)
 	for {
 		time.Sleep(time.Second)
@@ -77,10 +56,10 @@ func ExampleShowInfo() {
 
 		log.Println(hex.EncodeToString(buffer[0:32]))
 
-		log.Println(binary.BigEndian.Uint64(buffer[0:8]))
-		log.Println(binary.BigEndian.Uint64(buffer[8:16]))
-		log.Println(binary.BigEndian.Uint64(buffer[16:24]))
-		log.Println(binary.BigEndian.Uint64(buffer[24:32]))
+		printUint64(binary.BigEndian.Uint64(buffer[0:8]))
+		printUint64(binary.BigEndian.Uint64(buffer[8:16]))
+		printUint64(binary.BigEndian.Uint64(buffer[16:24]))
+		printUint64(binary.BigEndian.Uint64(buffer[24:32]))
 	}
 
 	// output:

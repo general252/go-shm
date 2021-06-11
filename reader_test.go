@@ -4,7 +4,7 @@ import "log"
 
 const (
 	shmName = "shm_transport"
-	shmSize = int32(64 * 1024 * 1024)
+	shmSize = int32(64 * 1024 * 1024) // 64MB
 )
 
 func ExampleNewReader() {
@@ -18,25 +18,18 @@ func ExampleNewReader() {
 	}
 	defer r.Close()
 
-	buffer := make([]byte, 32*1024)
+	buffer := make([]byte, 128*1024)
 
-	log.Println("接收数据:")
+	log.Println("recv data")
+
 	for i := 0; i >= 0; i++ {
 		n, err := r.Read(buffer)
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		_ = n
 
-		if false {
-			if i%25000 == 0 {
-				log.Printf("recv: %v\n", string(buffer[:10]))
-			}
-		}
-		if true {
-			log.Printf("recv: %v\n", string(buffer[:n]))
-		}
+		log.Printf("recv: %v\n", string(buffer[:n]))
 	}
 
 	// output:
